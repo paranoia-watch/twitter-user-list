@@ -1,0 +1,307 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`twitter-user-list`
+
+
+@demo demo/index.html 
+-->
+
+<dom-module id="twitter-user-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --color-red: rgba(255, 0, 80, 1);
+        background-color: var(--color-red);
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      header {
+        position: relative;
+        z-index: 1;
+      }
+
+      #select-period {
+        display: flex;
+        background-color: black;
+      }
+
+      #select-period button {
+        flex: 1;
+        background-color: transparent;
+        outline: none;
+        border: 2px solid transparent;
+        border-bottom-color: rgba(255, 255, 255, 0.2);
+        height: 54px;
+        color: white;
+        font-size: 18px;
+      }
+
+      #select-location {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        position: relative;
+        padding: 20px 40px;
+      }
+
+      #select-period button[selected] {
+        border-bottom-color: white;
+      }
+
+      h1 {
+        color: black;
+        font-size: 14px;
+        font-weight: bolder;
+        margin-top: 10px;
+        text-transform: uppercase;
+      }
+
+      #selectedLocationButton {
+        flex: 1;
+        border: 0;
+        background-color: transparent;
+        color: black;
+        position: relative;
+        outline: none;
+        font-size: 18px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0;
+      }
+
+      #select-location select {
+        position: absolute;
+        width: 25%;
+        height: 54px;
+        opacity: 0;
+        font-size: 18px;
+        top: 20px;
+      }
+      
+      svg {
+        width: 15px;
+        height: 12px;
+      }
+
+      #selectedLocationButton svg {
+        width: 15px;
+        height: 12px;
+        margin: 3px 0 0 5px;
+      }
+
+      svg g {
+        fill: black;       
+      }
+
+      svg g:hover, svg g:active {
+        fill: white;        
+      }
+
+      main {
+        padding-bottom: 10px;
+      }
+
+      main ol {
+        counter-reset: section;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      main ol li {
+        height: 65px;
+        display: flex;
+        font-size: 18px;
+        padding: 0;
+        margin: 0 20px;
+        margin-bottom: 10px;
+      }
+
+      main ol li span {
+        display: flex;
+        flex:1;
+        height: 100%;
+        align-items: center;
+        border-bottom: 2px solid black;
+      }
+
+      main ol li::before {
+        counter-increment: section;
+        content: counters(section,".") " ";
+        width: 60px;
+        height: 100%;
+        background-color: black;
+        color: var(--color-red);
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+      }
+    </style>
+
+    <div class="container">
+
+    <header>
+
+      <nav id="select-period">
+        <button value="hour" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsHour]]">Hour</button>
+        <button value="day" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsDay]]">Day</button>
+        <button value="week" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsWeek]]">Week</button>
+        <button value="month" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsMonth]]">Month</button>
+        <button value="allTime" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsAllTime]]">All Time</button>
+      </nav>
+
+      <nav id="select-location">
+        <button id="selectedLocationButton">
+          [[selectedLocation]]
+          <svg viewBox="0 0 15 12" version="1.1" xmlns="http://www.w3.org/2000/svg">
+              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <polygon transform="translate(7.700000, 6.000000) rotate(-90.000000) translate(-7.700000, -6.000000) " points="11.4 1.4 10 -1.70530257e-13 4 6 10 12 11.4 10.6 6.8 6"></polygon>
+              </g>
+          </svg>
+          </button>
+        <select value="{{selectedLocation::change}}">
+          <option value="Amsterdam">Amsterdam</option>
+          <option value="Berlin">Berlin</option>
+          <option value="Paris">Paris</option>
+        </select>
+        <h1>Top 10 influencers</h1>
+      </nav>
+
+    </header>
+
+    <main>
+      <ol>
+        <template is="dom-repeat" items="[[items]]">
+          <li><span>@[[item._id.publisherShortName]]</span></li>        
+        </template>
+      </ol>
+    </main>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'twitter-user-list',
+
+      properties: {
+        socketData: {
+          type: Object,
+          value: {"hour": {"Amsterdam": [],"Berlin": [],"Paris": []},"day": {"Amsterdam": [{"_id": {"publisherShortName": "NOS","publisherName": "NOS"},"totalWeight": 1227.8476923076923},{"_id": {"publisherShortName": "gouvernementFR","publisherName": "Gouvernement"},"totalWeight": 1118.9892307692307},{"_id": {"publisherShortName": "volkskrant","publisherName": "de Volkskrant"},"totalWeight": 943.5707692307693},{"_id": {"publisherShortName": "AfterRMC","publisherName": "After Foot RMC"},"totalWeight": 286.0938461538462},{"_id": {"publisherShortName": "trouw","publisherName": "Trouw"},"totalWeight": 257.7876923076923},{"_id": {"publisherShortName": "JacquelineWxxx","publisherName": "Jacqueline xxx"},"totalWeight": 198.77076923076925},{"_id": {"publisherShortName": "Teletekst","publisherName": "NOS Teletekst"},"totalWeight": 183.92461538461538},{"_id": {"publisherShortName": "BWBreaking","publisherName": "BW Breaking News"},"totalWeight": 180.24307692307693},{"_id": {"publisherShortName": "OyeQazilbash","publisherName": "Ali #NeverForget"},"totalWeight": 125.38769230769232},{"_id": {"publisherShortName": "TPOnl","publisherName": "ThePostOnline"},"totalWeight": 107.86153846153846}],"Berlin": [{"_id": {"publisherShortName": "welt","publisherName": "WELT"},"totalWeight": 5165.043076923077},{"_id": {"publisherShortName": "BILD","publisherName": "BILD"},"totalWeight": 4641.875384615385},{"_id": {"publisherShortName": "ntvde","publisherName": "n-tv"},"totalWeight": 2553.450769230769},{"_id": {"publisherShortName": "LarsWinter_","publisherName": "Lars Winter"},"totalWeight": 847.9476923076923},{"_id": {"publisherShortName": "DerSPIEGEL","publisherName": "DER SPIEGEL"},"totalWeight": 570.7307692307693},{"_id": {"publisherShortName": "N24","publisherName": "N24"},"totalWeight": 438.8953846153846},{"_id": {"publisherShortName": "tagesspiegel","publisherName": "Der Tagesspiegel"},"totalWeight": 430.53076923076924},{"_id": {"publisherShortName": "New_Media_TN","publisherName": "guenstig-leben-bauen"},"totalWeight": 351.64923076923077},{"_id": {"publisherShortName": "berlinerzeitung","publisherName": "Berliner Zeitung"},"totalWeight": 236.88923076923078},{"_id": {"publisherShortName": "phoenix_de","publisherName": "PHOENIX"},"totalWeight": 178.7}],"Paris": [{"_id": {"publisherShortName": "lemondefr","publisherName": "Le Monde"},"totalWeight": 9970.341538461538},{"_id": {"publisherShortName": "le_Parisien","publisherName": "Le Parisien"},"totalWeight": 5296.498461538462},{"_id": {"publisherShortName": "France24_fr","publisherName": "FRANCE 24 Français"},"totalWeight": 3111.507692307692},{"_id": {"publisherShortName": "BFMTV","publisherName": "BFMTV"},"totalWeight": 3076.4169230769235},{"_id": {"publisherShortName": "franceinfo","publisherName": "franceinfo"},"totalWeight": 2908.5261538461536},{"_id": {"publisherShortName": "jeune_afrique","publisherName": "Jeune Afrique"},"totalWeight": 2554.3276923076924},{"_id": {"publisherShortName": "RFI","publisherName": "RFI"},"totalWeight": 1947.3215384615385},{"_id": {"publisherShortName": "beinsports_FR","publisherName": "beIN SPORTS"},"totalWeight": 1558.1092307692309},{"_id": {"publisherShortName": "itele","publisherName": "iTELE"},"totalWeight": 1389.0692307692307},{"_id": {"publisherShortName": "morandiniblog","publisherName": "Jean Marc Morandini"},"totalWeight": 1376.1938461538462}]},"week": {"Amsterdam": [{"_id": {"publisherShortName": "NOS","publisherName": "NOS"},"totalWeight": 1227.8476923076923},{"_id": {"publisherShortName": "gouvernementFR","publisherName": "Gouvernement"},"totalWeight": 1118.9892307692307},{"_id": {"publisherShortName": "volkskrant","publisherName": "de Volkskrant"},"totalWeight": 943.5707692307693},{"_id": {"publisherShortName": "AfterRMC","publisherName": "After Foot RMC"},"totalWeight": 286.0938461538462},{"_id": {"publisherShortName": "trouw","publisherName": "Trouw"},"totalWeight": 257.7876923076923},{"_id": {"publisherShortName": "JacquelineWxxx","publisherName": "Jacqueline xxx"},"totalWeight": 198.77076923076925},{"_id": {"publisherShortName": "Teletekst","publisherName": "NOS Teletekst"},"totalWeight": 183.92461538461538},{"_id": {"publisherShortName": "BWBreaking","publisherName": "BW Breaking News"},"totalWeight": 180.24307692307693},{"_id": {"publisherShortName": "OyeQazilbash","publisherName": "Ali #NeverForget"},"totalWeight": 125.38769230769232},{"_id": {"publisherShortName": "TPOnl","publisherName": "ThePostOnline"},"totalWeight": 107.86153846153846}],"Berlin": [{"_id": {"publisherShortName": "welt","publisherName": "WELT"},"totalWeight": 5165.043076923077},{"_id": {"publisherShortName": "BILD","publisherName": "BILD"},"totalWeight": 4641.875384615385},{"_id": {"publisherShortName": "ntvde","publisherName": "n-tv"},"totalWeight": 2553.450769230769},{"_id": {"publisherShortName": "LarsWinter_","publisherName": "Lars Winter"},"totalWeight": 847.9476923076923},{"_id": {"publisherShortName": "DerSPIEGEL","publisherName": "DER SPIEGEL"},"totalWeight": 570.7307692307693},{"_id": {"publisherShortName": "N24","publisherName": "N24"},"totalWeight": 438.8953846153846},{"_id": {"publisherShortName": "tagesspiegel","publisherName": "Der Tagesspiegel"},"totalWeight": 430.53076923076924},{"_id": {"publisherShortName": "New_Media_TN","publisherName": "guenstig-leben-bauen"},"totalWeight": 351.64923076923077},{"_id": {"publisherShortName": "berlinerzeitung","publisherName": "Berliner Zeitung"},"totalWeight": 236.88923076923078},{"_id": {"publisherShortName": "phoenix_de","publisherName": "PHOENIX"},"totalWeight": 178.7}],"Paris": [{"_id": {"publisherShortName": "lemondefr","publisherName": "Le Monde"},"totalWeight": 9970.341538461538},{"_id": {"publisherShortName": "le_Parisien","publisherName": "Le Parisien"},"totalWeight": 5296.498461538462},{"_id": {"publisherShortName": "France24_fr","publisherName": "FRANCE 24 Français"},"totalWeight": 3111.507692307692},{"_id": {"publisherShortName": "BFMTV","publisherName": "BFMTV"},"totalWeight": 3076.4169230769235},{"_id": {"publisherShortName": "franceinfo","publisherName": "franceinfo"},"totalWeight": 2908.5261538461536},{"_id": {"publisherShortName": "jeune_afrique","publisherName": "Jeune Afrique"},"totalWeight": 2554.3276923076924},{"_id": {"publisherShortName": "RFI","publisherName": "RFI"},"totalWeight": 1947.3215384615385},{"_id": {"publisherShortName": "beinsports_FR","publisherName": "beIN SPORTS"},"totalWeight": 1558.1092307692309},{"_id": {"publisherShortName": "itele","publisherName": "iTELE"},"totalWeight": 1389.0692307692307},{"_id": {"publisherShortName": "morandiniblog","publisherName": "Jean Marc Morandini"},"totalWeight": 1376.1938461538462}]},"month": {"Amsterdam": [{"_id": {"publisherShortName": "NOS","publisherName": "NOS"},"totalWeight": 1227.8476923076923},{"_id": {"publisherShortName": "gouvernementFR","publisherName": "Gouvernement"},"totalWeight": 1118.9892307692307},{"_id": {"publisherShortName": "volkskrant","publisherName": "de Volkskrant"},"totalWeight": 943.5707692307693},{"_id": {"publisherShortName": "AfterRMC","publisherName": "After Foot RMC"},"totalWeight": 286.0938461538462},{"_id": {"publisherShortName": "trouw","publisherName": "Trouw"},"totalWeight": 257.7876923076923},{"_id": {"publisherShortName": "JacquelineWxxx","publisherName": "Jacqueline xxx"},"totalWeight": 198.77076923076925},{"_id": {"publisherShortName": "Teletekst","publisherName": "NOS Teletekst"},"totalWeight": 183.92461538461538},{"_id": {"publisherShortName": "BWBreaking","publisherName": "BW Breaking News"},"totalWeight": 180.24307692307693},{"_id": {"publisherShortName": "OyeQazilbash","publisherName": "Ali #NeverForget"},"totalWeight": 125.38769230769232},{"_id": {"publisherShortName": "TPOnl","publisherName": "ThePostOnline"},"totalWeight": 107.86153846153846}],"Berlin": [{"_id": {"publisherShortName": "welt","publisherName": "WELT"},"totalWeight": 5165.043076923077},{"_id": {"publisherShortName": "BILD","publisherName": "BILD"},"totalWeight": 4641.875384615385},{"_id": {"publisherShortName": "ntvde","publisherName": "n-tv"},"totalWeight": 2553.450769230769},{"_id": {"publisherShortName": "LarsWinter_","publisherName": "Lars Winter"},"totalWeight": 847.9476923076923},{"_id": {"publisherShortName": "DerSPIEGEL","publisherName": "DER SPIEGEL"},"totalWeight": 570.7307692307693},{"_id": {"publisherShortName": "N24","publisherName": "N24"},"totalWeight": 438.8953846153846},{"_id": {"publisherShortName": "tagesspiegel","publisherName": "Der Tagesspiegel"},"totalWeight": 430.53076923076924},{"_id": {"publisherShortName": "New_Media_TN","publisherName": "guenstig-leben-bauen"},"totalWeight": 351.64923076923077},{"_id": {"publisherShortName": "berlinerzeitung","publisherName": "Berliner Zeitung"},"totalWeight": 236.88923076923078},{"_id": {"publisherShortName": "phoenix_de","publisherName": "PHOENIX"},"totalWeight": 178.7}],"Paris": [{"_id": {"publisherShortName": "lemondefr","publisherName": "Le Monde"},"totalWeight": 9970.341538461538},{"_id": {"publisherShortName": "le_Parisien","publisherName": "Le Parisien"},"totalWeight": 5296.498461538462},{"_id": {"publisherShortName": "France24_fr","publisherName": "FRANCE 24 Français"},"totalWeight": 3111.507692307692},{"_id": {"publisherShortName": "BFMTV","publisherName": "BFMTV"},"totalWeight": 3076.4169230769235},{"_id": {"publisherShortName": "franceinfo","publisherName": "franceinfo"},"totalWeight": 2908.5261538461536},{"_id": {"publisherShortName": "jeune_afrique","publisherName": "Jeune Afrique"},"totalWeight": 2554.3276923076924},{"_id": {"publisherShortName": "RFI","publisherName": "RFI"},"totalWeight": 1947.3215384615385},{"_id": {"publisherShortName": "beinsports_FR","publisherName": "beIN SPORTS"},"totalWeight": 1558.1092307692309},{"_id": {"publisherShortName": "itele","publisherName": "iTELE"},"totalWeight": 1389.0692307692307},{"_id": {"publisherShortName": "morandiniblog","publisherName": "Jean Marc Morandini"},"totalWeight": 1376.1938461538462}]},"allTime": {"Amsterdam": [{"_id": {"publisherShortName": "NOS","publisherName": "NOS"},"totalWeight": 1227.8476923076923},{"_id": {"publisherShortName": "gouvernementFR","publisherName": "Gouvernement"},"totalWeight": 1118.9892307692307},{"_id": {"publisherShortName": "volkskrant","publisherName": "de Volkskrant"},"totalWeight": 943.5707692307693},{"_id": {"publisherShortName": "AfterRMC","publisherName": "After Foot RMC"},"totalWeight": 286.0938461538462},{"_id": {"publisherShortName": "trouw","publisherName": "Trouw"},"totalWeight": 257.7876923076923},{"_id": {"publisherShortName": "JacquelineWxxx","publisherName": "Jacqueline xxx"},"totalWeight": 198.77076923076925},{"_id": {"publisherShortName": "Teletekst","publisherName": "NOS Teletekst"},"totalWeight": 183.92461538461538},{"_id": {"publisherShortName": "BWBreaking","publisherName": "BW Breaking News"},"totalWeight": 180.24307692307693},{"_id": {"publisherShortName": "OyeQazilbash","publisherName": "Ali #NeverForget"},"totalWeight": 125.38769230769232},{"_id": {"publisherShortName": "TPOnl","publisherName": "ThePostOnline"},"totalWeight": 107.86153846153846}],"Berlin": [{"_id": {"publisherShortName": "welt","publisherName": "WELT"},"totalWeight": 5165.043076923077},{"_id": {"publisherShortName": "BILD","publisherName": "BILD"},"totalWeight": 4641.875384615385},{"_id": {"publisherShortName": "ntvde","publisherName": "n-tv"},"totalWeight": 2553.450769230769},{"_id": {"publisherShortName": "LarsWinter_","publisherName": "Lars Winter"},"totalWeight": 847.9476923076923},{"_id": {"publisherShortName": "DerSPIEGEL","publisherName": "DER SPIEGEL"},"totalWeight": 570.7307692307693},{"_id": {"publisherShortName": "N24","publisherName": "N24"},"totalWeight": 438.8953846153846},{"_id": {"publisherShortName": "tagesspiegel","publisherName": "Der Tagesspiegel"},"totalWeight": 430.53076923076924},{"_id": {"publisherShortName": "New_Media_TN","publisherName": "guenstig-leben-bauen"},"totalWeight": 351.64923076923077},{"_id": {"publisherShortName": "berlinerzeitung","publisherName": "Berliner Zeitung"},"totalWeight": 236.88923076923078},{"_id": {"publisherShortName": "phoenix_de","publisherName": "PHOENIX"},"totalWeight": 178.7}],"Paris": [{"_id": {"publisherShortName": "lemondefr","publisherName": "Le Monde"},"totalWeight": 9970.341538461538},{"_id": {"publisherShortName": "le_Parisien","publisherName": "Le Parisien"},"totalWeight": 5296.498461538462},{"_id": {"publisherShortName": "France24_fr","publisherName": "FRANCE 24 Français"},"totalWeight": 3111.507692307692},{"_id": {"publisherShortName": "BFMTV","publisherName": "BFMTV"},"totalWeight": 3076.4169230769235},{"_id": {"publisherShortName": "franceinfo","publisherName": "franceinfo"},"totalWeight": 2908.5261538461536},{"_id": {"publisherShortName": "jeune_afrique","publisherName": "Jeune Afrique"},"totalWeight": 2554.3276923076924},{"_id": {"publisherShortName": "RFI","publisherName": "RFI"},"totalWeight": 1947.3215384615385},{"_id": {"publisherShortName": "beinsports_FR","publisherName": "beIN SPORTS"},"totalWeight": 1558.1092307692309},{"_id": {"publisherShortName": "itele","publisherName": "iTELE"},"totalWeight": 1389.0692307692307},{"_id": {"publisherShortName": "morandiniblog","publisherName": "Jean Marc Morandini"},"totalWeight": 1376.1938461538462}]}}
+        },
+
+        items: {
+          type: Array,
+          computed: '_computeItems(selectedLocation, selectedPeriod, socketData.*)'
+        },
+
+        selectedLocation: {
+          type: String,
+          value: 'Amsterdam'
+        },
+
+        _selectedLocationIsAmsterdam: {
+          type: Boolean,
+          computed: '_computeSelectedLocationIsAmsterdam(selectedLocation)'
+        },
+
+        _selectedLocationIsBerlin: {
+          type: Boolean,
+          computed: '_computeSelectedLocationIsBerlin(selectedLocation)'
+        },
+
+        _selectedLocationIsParis: {
+          type: Boolean,
+          computed: '_computeSelectedLocationIsParis(selectedLocation)'
+        },
+
+        selectedPeriod: {
+          type: String,
+          value: 'allTime'
+        },
+
+        _selectedPeriodIsHour: {
+          type: Boolean,
+          computed: '_computeSelectedPeriodIsHour(selectedPeriod)'
+        },
+
+        _selectedPeriodIsDay: {
+          type: Boolean,
+          computed: '_computeSelectedPeriodIsDay(selectedPeriod)'
+        },
+
+        _selectedPeriodIsWeek: {
+          type: Boolean,
+          computed: '_computeSelectedPeriodIsWeek(selectedPeriod)'
+        },
+
+        _selectedPeriodIsMonth: {
+          type: Boolean,
+          computed: '_computeSelectedPeriodIsMonth(selectedPeriod)'
+        },
+
+        _selectedPeriodIsAllTime: {
+          type: Boolean,
+          computed: '_computeSelectedPeriodIsAllTime(selectedPeriod)'
+        },
+
+      },
+
+      _computeSelectedLocationIsAmsterdam: function(selectedLocation) {
+        return selectedLocation == 'Amsterdam';
+      },
+
+      _computeSelectedLocationIsBerlin: function(selectedLocation) {
+        return selectedLocation == 'Berlin';
+      },
+
+      _computeSelectedLocationIsParis: function(selectedLocation) {
+        return selectedLocation == 'Paris';
+      },
+
+      _selectLocation: function(evt) {
+        this.selectedLocation = evt.target.value;
+      },
+
+      _computeSelectedPeriodIsHour: function(selectedPeriod) {
+        return selectedPeriod == 'hour';
+      },
+
+      _computeSelectedPeriodIsDay: function(selectedPeriod) {
+        return selectedPeriod == 'day';
+      },
+
+      _computeSelectedPeriodIsWeek: function(selectedPeriod) {
+        return selectedPeriod == 'week';
+      },
+
+      _computeSelectedPeriodIsMonth: function(selectedPeriod) {
+        return selectedPeriod == 'month';
+      },
+
+      _computeSelectedPeriodIsAllTime: function(selectedPeriod) {
+        return selectedPeriod == 'allTime';
+      },
+
+      _selectPeriod: function(evt) {
+        this.selectedPeriod = evt.target.value;
+      },
+
+      _computeItems: function(selectedLocation, selectedPeriod, socketDataChange) {
+        var socketData = socketDataChange.base;
+        return socketData[selectedPeriod][selectedLocation]
+      }
+
+    });
+  </script>
+</dom-module>
