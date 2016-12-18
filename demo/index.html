@@ -20,11 +20,36 @@
   </head>
   <body>
     <div class="vertical-section-container centered">
-      <h3>Basic twitter-user-list demo</h3>
+      
+      <h3>All Influencers Demo</h3>
       <demo-snippet>
         <template is="dom-bind" id="demo" socket-data="{{socketData}}">
           <twitter-user-list
+            title="Top Influencers"
             socket-server-url="http://localhost:4000"
+            listen-to="top-influencers"
+            show-hour
+            show-day
+            show-week
+            show-month
+            show-all
+            selected-period="day"
+          ></twitter-user-list>
+        </template>
+      </demo-snippet>
+
+      <h3>Political Influencers Demo</h3>
+      <demo-snippet>
+        <template is="dom-bind" id="demo" socket-data="{{socketData}}">
+          <twitter-user-list
+            title="Top Political Influencers"
+            socket-server-url="http://localhost:4000"
+            listen-to="top-political-influencers"
+            show-day
+            show-week
+            show-month
+            show-all
+            selected-period="day"
           ></twitter-user-list>
         </template>
       </demo-snippet>

@@ -151,11 +151,11 @@
     <header>
 
       <nav id="select-period">
-        <button value="hour" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsHour]]">Hour</button>
-        <button value="day" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsDay]]">Day</button>
-        <button value="week" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsWeek]]">Week</button>
-        <button value="month" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsMonth]]">Month</button>
-        <button value="allTime" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsAllTime]]">All Time</button>
+        <button hidden$="[[!showHour]]" value="hour" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsHour]]">Hour</button>
+        <button hidden$="[[!showDay]]" value="day" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsDay]]">Day</button>
+        <button hidden$="[[!showWeek]]" value="week" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsWeek]]">Week</button>
+        <button hidden$="[[!showMonth]]" value="month" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsMonth]]">Month</button>
+        <button hidden$="[[!showAll]]" value="allTime" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsAllTime]]">All Time</button>
       </nav>
 
       <nav id="select-location">
@@ -172,14 +172,14 @@
           <option value="Berlin">Berlin</option>
           <option value="Paris">Paris</option>
         </select>
-        <h1>Top 10 influencers</h1>
+        <h1>[[title]]</h1>
       </nav>
 
     </header>
 
     <main>
       <ol>
-        <template is="dom-repeat" items="[[items]]">
+        <template is="dom-repeat" items="[[items]]" rendered-item-count="10">
           <li><span>@[[item._id.publisherShortName]]</span></li>        
         </template>
       </ol>
@@ -197,6 +197,14 @@
       properties: {
 
         socketServerUrl: {
+          type: String
+        },
+
+        listenTo: {
+          type: String
+        },
+
+        title: {
           type: String
         },
 
@@ -235,6 +243,31 @@
           value: 'allTime'
         },
 
+        showHour: {
+          type: Boolean,
+          value: false
+        },
+
+        showDay: {
+          type: Boolean,
+          value: false
+        },
+
+        showWeek: {
+          type: Boolean,
+          value: false
+        },
+
+        showMonth: {
+          type: Boolean,
+          value: false
+        },
+
+        showAll: {
+          type: Boolean,
+          value: false
+        },
+
         _selectedPeriodIsHour: {
           type: Boolean,
           computed: '_computeSelectedPeriodIsHour(selectedPeriod)'
@@ -263,10 +296,12 @@
       },
 
       observers: [
-        '_initSocket(socketServerUrl)'
+        '_initSocket(socketServerUrl, listenTo)'
       ],
 
-      _initSocket: function(socketServerUrl) {
+      _initSocket: function(socketServerUrl, listenTo) {
+
+        console.log(socketServerUrl, listenTo);
 
         var head = document.getElementsByTagName('head')[0];
         var js = document.createElement("script");
@@ -274,7 +309,7 @@
         js.src = socketServerUrl + "/socket.io/socket.io.js";
         js.onload = (function() {
           var socket = io(socketServerUrl);
-          socket.on('top-influencers', (function (data) {
+          socket.on(listenTo, (function (data) {
             this.set('socketData', data);
           }).bind(this));          
         }).bind(this);
@@ -324,9 +359,16 @@
       },
 
       _computeItems: function(selectedLocation, selectedPeriod, socketDataChange) {
-        var socketData = socketDataChange.base;
-        if(!socketData[selectedPeriod]) return;
-        return socketData[selectedPeriod][selectedLocation]
+        var socketData = this.socketData;
+
+        console.log(selectedLocation, selectedPeriod, socketData)
+
+        if(!socketData[selectedPeriod]) return [];
+        if(!socketData[selectedPeriod][selectedLocation]) return [];
+
+        var items = JSON.parse(JSON.stringify(socketData[selectedPeriod][selectedLocation]));
+
+        return items.splice(0, 10);
       }
 
     });
