@@ -361,8 +361,6 @@
       _computeItems: function(selectedLocation, selectedPeriod, socketDataChange) {
         var socketData = this.socketData;
 
-        console.log(selectedLocation, selectedPeriod, socketData)
-
         if(!socketData[selectedPeriod]) return [];
         if(!socketData[selectedPeriod][selectedLocation]) return [];
 
