@@ -11,13 +11,14 @@
   <template>
     <style>
       :host {
-        display: block;
         --color-red: rgba(255, 0, 80, 1);
         background-color: var(--color-red);
       }
 
       .container {
         flex: 1;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       button {
