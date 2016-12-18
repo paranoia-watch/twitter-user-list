@@ -22,8 +22,10 @@
     <div class="vertical-section-container centered">
       <h3>Basic twitter-user-list demo</h3>
       <demo-snippet>
-        <template>
-          <twitter-user-list></twitter-user-list>
+        <template is="dom-bind" id="demo" socket-data="{{socketData}}">
+          <twitter-user-list
+            socket-server-url="http://localhost:4000"
+          ></twitter-user-list>
         </template>
       </demo-snippet>
     </div>
