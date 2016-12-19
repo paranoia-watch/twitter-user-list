@@ -2,7 +2,8 @@
   "name": "twitter-user-list",
   "main": "twitter-user-list.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.4.0"
+    "polymer": "Polymer/polymer#^1.7.0",
+    "paranoia-watch-styles": "paranoia-watch/paranoia-watch-styles"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

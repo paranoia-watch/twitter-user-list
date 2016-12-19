@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paranoia-watch-styles/paranoia-watch-styles.html">
 
 <!--
 `twitter-user-list`
@@ -9,176 +10,57 @@
 
 <dom-module id="twitter-user-list">
   <template>
-    <style>
+    <style include="paranoia-watch-styles">
+
       :host {
-        --color-red: rgba(255, 0, 80, 1);
-        background-color: var(--color-red);
+        display: block;
+      }
+
+      .radio-group {
+        display: flex;
+        color: white;
+      }
+
+      .radio-button,
+      .select-button {
+        color: white;
+      }
+
+      .select-button {
       }
 
       .container {
+        background-color: black;
         flex: 1;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
       }
 
-      button {
-        cursor: pointer;
-      }
-
-      header {
-        position: relative;
-        z-index: 1;
-      }
-
-      #select-period {
-        display: flex;
-        background-color: black;
-      }
-
-      #select-period button {
-        flex: 1;
-        background-color: transparent;
-        outline: none;
-        border: 2px solid transparent;
-        border-bottom-color: rgba(255, 255, 255, 0.2);
-        height: 54px;
-        color: white;
-        font-size: 18px;
-      }
-
       #select-location {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
         position: relative;
-        padding: 20px 40px;
-        box-sizing: border-box;
       }
 
-      #select-period button[selected] {
-        border-bottom-color: white;
-      }
-
-      h1 {
-        color: black;
-        font-size: 14px;
-        font-weight: bolder;
-        margin-top: 10px;
-        text-transform: uppercase;
-      }
-
-      #selectedLocationButton {
-        flex: 1;
-        border: 0;
-        background-color: transparent;
-        color: black;
-        position: relative;
-        outline: none;
-        font-size: 18px;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0;
-      }
-
-      #select-location select {
-        position: absolute;
-        width: 25%;
-        height: 54px;
-        opacity: 0;
-        font-size: 18px;
-        top: 20px;
-      }
-      
-      svg {
-        width: 15px;
-        height: 12px;
-      }
-
-      #selectedLocationButton svg {
-        width: 15px;
-        height: 12px;
-        margin: 3px 0 0 5px;
-      }
-
-      svg g {
-        fill: black;       
-      }
-
-      svg g:hover, svg g:active {
-        fill: white;        
-      }
-
-      main {
-        padding-bottom: 10px;
-      }
-
-      main ol {
-        counter-reset: section;
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      main ol li {
-        height: 65px;
-        display: flex;
-        font-size: 18px;
-        padding: 0;
-        margin: 0 20px;
-        margin-bottom: 10px;
-      }
-
-      main ol li span {
-        display: flex;
-        flex:1;
-        height: 100%;
-        align-items: center;
-        border-bottom: 2px solid black;
-      }
-
-      main ol li::before {
-        counter-increment: section;
-        content: counters(section,".") " ";
-        width: 60px;
-        height: 100%;
-        background-color: black;
-        color: var(--color-red);
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 10px;
-      }
     </style>
 
     <div class="container">
 
     <header>
 
-      <nav id="select-period">
-        <button hidden$="[[!showHour]]" value="hour" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsHour]]">Hour</button>
-        <button hidden$="[[!showDay]]" value="day" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsDay]]">Day</button>
-        <button hidden$="[[!showWeek]]" value="week" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsWeek]]">Week</button>
-        <button hidden$="[[!showMonth]]" value="month" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsMonth]]">Month</button>
-        <button hidden$="[[!showAll]]" value="allTime" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsAllTime]]">All Time</button>
+      <nav id="select-period" class="radio-group">
+        <button class="radio-button" hidden$="[[!showHour]]" value="hour" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsHour]]">Hour</button>
+        <button class="radio-button" hidden$="[[!showDay]]" value="day" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsDay]]">Day</button>
+        <button class="radio-button" hidden$="[[!showWeek]]" value="week" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsWeek]]">Week</button>
+        <button class="radio-button" hidden$="[[!showMonth]]" value="month" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsMonth]]">Month</button>
+        <button class="radio-button" hidden$="[[!showAll]]" value="allTime" on-tap="_selectPeriod" selected$="[[_selectedPeriodIsAllTime]]">All Time</button>
       </nav>
 
       <nav id="select-location">
-        <button id="selectedLocationButton">
-          [[selectedLocation]]
-          <svg viewBox="0 0 15 12" version="1.1" xmlns="http://www.w3.org/2000/svg">
-              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                <polygon transform="translate(7.700000, 6.000000) rotate(-90.000000) translate(-7.700000, -6.000000) " points="11.4 1.4 10 -1.70530257e-13 4 6 10 12 11.4 10.6 6.8 6"></polygon>
-              </g>
-          </svg>
-          </button>
+        <button id="selectedLocationButton" class="select-button">[[selectedLocation]]</button>
         <select value="{{selectedLocation::change}}">
           <option value="Amsterdam">Amsterdam</option>
           <option value="Berlin">Berlin</option>
           <option value="Paris">Paris</option>
         </select>
-        <h1>[[title]]</h1>
       </nav>
 
     </header>
