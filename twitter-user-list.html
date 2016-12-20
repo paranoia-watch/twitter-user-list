@@ -40,6 +40,11 @@
         position: relative;
       }
 
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
     </style>
 
     <div class="container">
@@ -68,7 +73,7 @@
     <main>
       <ol>
         <template is="dom-repeat" items="[[items]]" rendered-item-count="10">
-          <li><span>@[[item._id.publisherShortName]]</span></li>        
+          <li><span><a target="_blank" href="https://twitter.com/@[[item._id.publisherShortName]]">@[[item._id.publisherShortName]]</a></span></li>
         </template>
       </ol>
     </main>
